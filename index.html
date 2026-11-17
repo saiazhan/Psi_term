@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>PsiTerm — Панель управления</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <div class="brand-mark">ψ</div>
+      <p class="eyebrow">REMOTE DEVICE MANAGEMENT</p>
+      <h1>PsiTerm</h1>
+      <p class="muted">Войдите в панель управления</p>
+      <form id="login-form">
+        <label>Логин<input id="login-name" autocomplete="username" placeholder="Введите логин" required></label>
+        <label>Пароль<input id="login-password" type="password" autocomplete="current-password" placeholder="Введите пароль" required></label>
+        <p id="login-error" class="form-error" aria-live="polite"></p>
+        <button class="primary-btn full" type="submit">Войти <span>→</span></button>
+      </form>
+      <p class="login-note">Демонстрационный интерфейс · Авторизация пока не подключена</p>
+    </div>
+  </div>
+
+  <div id="app" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark small">ψ</span><div><b>PsiTerm</b><small>CONTROL CENTER</small></div></div>
+      <div class="side-caption">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+      <button class="nav-item active" data-page="dashboard"><span>▦</span> Обзор</button>
+      <button class="nav-item" data-page="devices"><span>▣</span> Устройства <i id="device-count">3</i></button>
+      <div class="side-caption">УПРАВЛЕНИЕ</div>
+      <button class="nav-item admin-only" data-page="users"><span>♙</span> Пользователи</button>
+      <button class="nav-item admin-only" data-page="admin-devices"><span>⚙</span> Управление устройствами</button>
+      <div class="sidebar-bottom">
+        <div class="user-mini"><div class="avatar" id="user-avatar">D</div><div><b id="sidebar-user">Demo Admin</b><small id="sidebar-role">Администратор</small></div><button id="logout-btn" title="Выйти">↪</button></div>
+        <div class="version">PsiTerm <span>v0.1.0 · prototype</span></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar"><div><span class="crumb">Рабочее пространство</span><span class="crumb-sep">/</span><b id="page-name">Обзор</b></div><div class="top-actions"><span class="connection-pill"><i></i> Интерфейс активен</span><div class="top-avatar" id="top-avatar">D</div></div></header>
+      <section id="page-dashboard" class="page">
+        <div class="page-heading"><div><p class="eyebrow">МОНИТОРИНГ</p><h1>Обзор</h1><p class="muted">Состояние устройств и рабочей среды</p></div><button class="secondary-btn" id="refresh-btn">↻ Обновить</button></div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-label">Всего устройств <span>▣</span></div><strong id="stat-total">03</strong><small>В реестре</small></article>
+          <article class="stat-card"><div class="stat-label">Онлайн <span class="green">●</span></div><strong id="stat-online">02</strong><small>Демо-статус</small></article>
+          <article class="stat-card"><div class="stat-label">Пользователи <span>♙</span></div><strong id="stat-users">04</strong><small>В демонстрационных данных</small></article>
+          <article class="stat-card"><div class="stat-label">SSH-сессии <span>⌁</span></div><strong>00</strong><small>Нет активных подключений</small></article>
+        </div>
+        <div class="section-heading"><div><h2>Устройства</h2><p class="muted">Быстрый доступ к зарегистрированным устройствам</p></div><button class="text-btn" data-goto="devices">Все устройства →</button></div>
+        <div id="dashboard-devices" class="device-grid"></div>
+        <div class="notice"><span>ⓘ</span><div><b>Режим прототипа</b><p>Данные демонстрационные. Вход, PostgreSQL и SSH пока не подключены. Не вводите реальные пароли.</p></div></div>
+      </section>
+
+      <section id="page-devices" class="page hidden">
+        <div class="page-heading"><div><p class="eyebrow">ИНФРАСТРУКТУРА</p><h1>Устройства</h1><p class="muted">Реестр серверов и сетевых устройств</p></div><div class="heading-actions"><input id="device-search" class="search-input" placeholder="⌕  Поиск устройства..."><button class="primary-btn admin-only" id="add-device-open">＋ Добавить</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>CPID</th><th>NAME</th><th>IP-АДРЕС</th><th>СТАТУС</th><th>ДЕЙСТВИЕ</th></tr></thead><tbody id="device-table"></tbody></table></div>
+      </section>
+
+      <section id="page-device" class="page hidden">
+        <button class="back-btn" data-goto="devices">← Назад к устройствам</button>
+        <div class="page-heading device-title"><div><p class="eyebrow">УПРАВЛЕНИЕ УСТРОЙСТВОМ</p><h1 id="detail-name">Device</h1><p class="muted" id="detail-meta">CPID · IP</p></div><span class="status-badge offline" id="detail-status">● Не подключено</span></div>
+        <div class="device-tabs"><button class="tab active" data-tab="files">Файловый менеджер</button><button class="tab" data-tab="terminal">Терминал</button><button class="tab" data-tab="info">Информация</button></div>
+        <div id="tab-files" class="tab-panel">
+          <div class="ssh-banner"><div><b>SSH-подключение</b><p class="muted">Подключение к устройству будет доступно после настройки backend</p></div><button class="primary-btn" id="connect-ssh">Подключиться</button></div>
+          <div class="file-toolbar"><button class="secondary-btn" id="up-folder">↑ Вверх</button><div class="path-box"><span>⌂</span><code id="current-path">/</code></div><button class="secondary-btn" id="refresh-files">↻</button></div>
+          <div class="file-table"><div class="file-row file-head"><span>ИМЯ</span><span>ТИП</span><span>РАЗМЕР</span><span>ИЗМЕНЁН</span></div><div id="file-list"></div></div>
+          <p class="muted small-text">Демо-режим: навигация по виртуальным папкам. Передача файлов пока не выполняется.</p>
+        </div>
+        <div id="tab-terminal" class="tab-panel hidden"><div class="terminal"><div class="terminal-top"><span></span><span></span><span></span><b>SSH TERMINAL · PREVIEW</b></div><div class="terminal-body"><p class="terminal-muted">Подключение не установлено</p><p><span class="terminal-green">demo@device</span>:<span class="terminal-blue">~</span>$ <span class="cursor"></span></p><p class="terminal-muted">Терминал станет доступен после подключения защищённого SSH backend.</p></div></div></div>
+        <div id="tab-info" class="tab-panel hidden"><div class="info-grid" id="device-info"></div></div>
+      </section>
+
+      <section id="page-users" class="page hidden">
+        <div class="page-heading"><div><p class="eyebrow">КОНТРОЛЬ ДОСТУПА</p><h1>Пользователи</h1><p class="muted">Учётные записи и уровни доступа</p></div><button class="primary-btn" id="add-user-open">＋ Добавить пользователя</button></div>
+        <div class="table-wrap"><table><thead><tr><th>ПОЛЬЗОВАТЕЛЬ</th><th>РОЛЬ</th><th>СТАТУС</th><th>ДЕЙСТВИЕ</th></tr></thead><tbody id="user-table"></tbody></table></div>
+        <div class="notice"><span>♙</span><div><b>Управление доступом</b><p>В этой версии изменения существуют только в памяти браузера и сбрасываются после перезагрузки.</p></div></div>
+      </section>
+
+      <section id="page-admin-devices" class="page hidden">
+        <div class="page-heading"><div><p class="eyebrow">КОНФИГУРАЦИЯ</p><h1>Управление устройствами</h1><p class="muted">Добавление и редактирование записей реестра</p></div><button class="primary-btn" id="add-device-open-2">＋ Добавить устройство</button></div>
+        <div class="table-wrap"><table><thead><tr><th>CPID</th><th>NAME</th><th>IP-АДРЕС</th><th>ДЕЙСТВИЕ</th></tr></thead><tbody id="admin-device-table"></tbody></table></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal" class="modal hidden"><div class="modal-card"><div class="modal-heading"><div><p class="eyebrow">КОНФИГУРАЦИЯ</p><h2 id="modal-title">Добавить</h2></div><button class="icon-btn" id="modal-close">×</button></div><form id="modal-form"><div id="modal-fields"></div><p id="modal-error" class="form-error"></p><div class="modal-actions"><button type="button" class="secondary-btn" id="modal-cancel">Отмена</button><button type="submit" class="primary-btn">Сохранить</button></div></form></div></div>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
