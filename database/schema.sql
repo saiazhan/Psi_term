@@ -71,3 +71,6 @@ CREATE INDEX IF NOT EXISTS idx_user_sessions_active ON user_sessions(user_id, ex
 ALTER TABLE protected_paths ADD COLUMN IF NOT EXISTS can_list BOOLEAN NOT NULL DEFAULT TRUE;
 ALTER TABLE protected_paths ADD COLUMN IF NOT EXISTS can_upload BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE protected_paths ADD COLUMN IF NOT EXISTS can_delete BOOLEAN NOT NULL DEFAULT FALSE;
+
+-- v0.3.1: optional mapping to the employee's Helpdesk account.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS helpdesk_login VARCHAR(128);
