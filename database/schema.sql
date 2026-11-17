@@ -60,3 +60,14 @@ CREATE INDEX IF NOT EXISTS idx_devices_active ON devices(is_active);
 CREATE INDEX IF NOT EXISTS idx_audit_log_created_at ON audit_log(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_tickets_created_at ON service_tickets(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_device_comments_device_date ON device_comments(device_id,created_at);
+
+-- v0.3.0: persisted login sessions and configurable file protection rules.
+CREATE TABLE IF NOT EXISTS user_sessions (
+ id BIGSERIAL PRIMARY KEY, user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ session_token_hash TEXT NOT NULL UNIQUE, last_activity_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ expires_at TIMESTAMPTZ NOT NULL, revoked_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_user_sessions_active ON user_sessions(user_id, expires_at) WHERE revoked_at IS NULL;
+ALTER TABLE protected_paths ADD COLUMN IF NOT EXISTS can_list BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE protected_paths ADD COLUMN IF NOT EXISTS can_upload BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE protected_paths ADD COLUMN IF NOT EXISTS can_delete BOOLEAN NOT NULL DEFAULT FALSE;
