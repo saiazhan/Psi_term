@@ -1,0 +1,6 @@
+[
+  {"id":"psi-test-01","name":"Test device A / SSH 1022","ip":"172.16.13.246","port":1022},
+  {"id":"psi-test-02","name":"Test device A / SSH 2022","ip":"172.16.13.246","port":2022},
+  {"id":"psi-test-03","name":"Test device B / SSH 1022","ip":"172.16.8.246","port":1022},
+  {"id":"psi-test-04","name":"Test device B / SSH 2022","ip":"172.16.8.246","port":2022}
+]
