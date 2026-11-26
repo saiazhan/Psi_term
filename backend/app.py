@@ -119,7 +119,12 @@ def list_devices():
 @app.route("/api/ssh-check/<device_id>", methods=["POST"])
 def ssh_check(device_id):
     logger.info("API SSH-check request | id=%s", device_id)
-    device = next((d for d in DEVICES if d["id"] == device_id), None)
+    try:
+        devices = load_devices()
+    except (OSError, json.JSONDecodeError):
+        logger.exception("Unable to load inventory for SSH check")
+        return jsonify({"ok": False, "message": "Unable to read device inventory"}), 500
+    device = next((d for d in devices if d["id"] == device_id), None)
     if device is None:
         logger.warning("API SSH-check unknown device | id=%s", device_id)
         return jsonify({"ok": False, "message": "Unknown test device"}), 404
