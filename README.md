@@ -48,3 +48,7 @@ python -m SimpleHTTPServer 8000
 
 ## Важные ограничения v0.3.1
 Сессии, авто-завершение после 14 дней и бездействие через 5 минут показаны только как frontend-демо. Браузер не может достоверно определять активность других пользователей или завершать их серверные подключения. В демо-таблице отображаются только сессии текущего экземпляра страницы; для общего списка нужен backend и общее хранилище сессий. В настоящем backend нужно хранить хеш случайного session token, продлевать idle timeout при действиях, задавать абсолютный срок жизни 14 дней, проверять revoked_at на каждом запросе и закрывать SSH/SFTP-сессии при отзыве. Роль Admin в текущем прототипе не защищена паролем и не является границей безопасности.
+
+
+## Local SSH test backend (Windows 7)
+A small backend prototype is available in `backend/`. It serves the existing frontend on localhost and exposes a test inventory plus SSH connection/authentication checks. It does not run remote commands or open a shell. Setup instructions: [backend/README.md](backend/README.md). Keep credentials in `backend/.env` (not committed).
