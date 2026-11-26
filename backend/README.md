@@ -25,3 +25,10 @@ The four entries represent two test IPs with SSH ports 1022 and 2022 each. Adjus
 
 ## Important
 This is a local development prototype, not production authentication or a secure remote-management service. Do not publish it or expose port 5000. The SSH check only confirms connection/authentication and then closes the session. Host keys should be verified from a trusted source before adding them to `known_hosts`.
+
+
+## Diagnostics
+- Backend console logs include HTTP requests/responses, API inventory loads, and SSH check outcomes (credentials are never logged).
+- Rotating backend logs are saved to `backend/logs/psiterm.log` with up to three 2 MB backups. This folder is ignored by Git.
+- Frontend diagnostic messages are prefixed with `[PsiTerm]` in the browser Developer Console. They log UI clicks, forms, errors, preference changes, and device-list fetches, but never form values or passwords.
+- Open the browser Developer Console with `F12` to view frontend logs.
