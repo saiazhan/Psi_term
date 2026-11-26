@@ -16,8 +16,12 @@ SSH_USER = os.getenv("SSH_USER", "")
 SSH_PASSWORD = os.getenv("SSH_PASSWORD", "")
 SSH_TIMEOUT = float(os.getenv("SSH_TIMEOUT", "5"))
 
-with open(BACKEND / "devices.json", "r", encoding="utf-8") as fh:
-    DEVICES = json.load(f)
+def load_devices():
+    with open(BACKEND / "devices.json", "r", encoding="utf-8") as fh:
+        return json.load(f)
+
+
+DEVICES = load_devices()
 
 
 def check_ssh(device):
@@ -58,7 +62,11 @@ def index():
 @app.route("/api/devices")
 def list_devices():
     # Only test inventory metadata is returned; credentials are never exposed.
-    return jsonify([{"id": d["id"], "name": d["name"], "ip": d["ip"], "port": d["port"]} for d in DEVICES])
+    try:
+        devices = load_devices()
+        return jsonify([{"id": d["id"], "name": d["name"], "ip": d["ip"], "port": d["port"]} for d in devices])
+    except (OSError, json.JSONDecodeError) as exc:
+        return jsonify({"error": "Unable to read backend/devices.json", "detail": str(exc)}), 500
 
 
 @app.route("/api/ssh-check/<device_id>", methods=["POST"])
